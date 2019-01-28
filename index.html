@@ -8,7 +8,24 @@
     <title>JS Ball Game</title>
 </head>
 <body>
-    <h1>JS Ball Game</h1>
+    <div id="mainWrapper">
+        <section id="panel">
+            <div id="buttonPanel">
+                <button id="buttonStart">start</button>
+                <button id="buttonPause" disabled>pause</button>
+                <button id="buttonRestart" disabled>restart</button>
+                <button id="buttonExit" disabled>exit</button>
+            </div>
+            <div id="timer">00:00:00</div>
+        </section>
+
+        <section id="gameWrapper">
+            <span id="msg"></span>
+            <svg id="gameBoard">
+                
+            </svg>
+        </section>
+    </div>
     <script src="js/index.js"></script>
 </body>
 </html>
