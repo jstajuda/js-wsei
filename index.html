@@ -8,11 +8,29 @@
     <title>JS Image Editor</title>
 </head>
 <body>
-    <h1>JS Image Editor</h1>
-    <nav>
-        <a href="#">nav link</a>
-        <a href="#">nav link</a>
-    </nav>
+    <section id="workspace">
+        <div id="panel">
+            <div>
+                <label for="imageFile">Choose an image file:</label>
+                <input type="file"
+                        id="imageFile" name="imageFile"
+                        accept="image/png, image/jpeg">
+            </div>
+            <div>
+                <form id="loadImageFromUrl">
+                    <label for="imageUrl">Enter an https:// URL:</label>
+                    <input type="url" name="imageUrl" id="imageUrl"
+                            placeholder="https://example.com"
+                            pattern="http(s)?://.*" size="30"
+                            required>
+                    <input type="submit" name="imageUrlButton" id="imageUrlButton" value="Load">
+                </form>
+            </div>
+        </div>
+        <div id="canvasWrapper">
+            <canvas id="imgCanvas"></canvas>
+        </div>
+    </section>
     <script src="js/index.js"></script>
 </body>
 </html>
