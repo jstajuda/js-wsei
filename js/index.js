@@ -1,7 +1,25 @@
-let uluru, map, marker
+let uluru, map
 let ws
-let players = {}
-let nick = '1'
+let players = []
+
+
+function createPlayer(playerId, nick) {
+    let currentdate = new Date();
+
+    if(playerId == -1) {
+        playerId = currentdate.valueOf();
+    }
+
+    let player = {
+        id: playerId,
+        nickname: nick,
+        marker: {}
+    }
+
+    players[player.id] = player;
+    return player;
+}
+let currentPlayer = createPlayer(-1, "Player 1");
 
 function initMap() {
     heaven = { lat: 55.752, lng: 37.616 };
@@ -19,7 +37,7 @@ function initMap() {
         icon: image
     });
 
-    players[nick] = marker;
+    currentPlayer.marker = marker;
 
     getLocalization()
     startWebSocket()
@@ -36,7 +54,7 @@ function geoOk(data) {
         lng: data.coords.longitude
     }
     map.setCenter(coords)
-    marker.setPosition(coords)
+    currentPlayer.marker.setPosition(coords)
 }
 
 function geoFail(err) {
@@ -47,8 +65,8 @@ function addKeyboardEvents() {
     window.addEventListener('keydown', moveMarker)
 }
 function moveMarker(ev) {
-    let lat = marker.getPosition().lat()
-    let lng = marker.getPosition().lng()
+    let lat = currentPlayer.marker.getPosition().lat()
+    let lng = currentPlayer.marker.getPosition().lng()
 
     switch (ev.code) {
         case 'ArrowUp':
@@ -71,14 +89,18 @@ function moveMarker(ev) {
     let wsData = {
         lat: lat,
         lng: lng,
-        id: nick
+        uid: currentPlayer.id,
+        nick: currentPlayer.nickname
     }
-    marker.setPosition(position)
+    currentPlayer.marker.setPosition(position)
     ws.send(JSON.stringify(wsData))
 }
 
 function startWebSocket() {
-    let url = 'ws://91.121.6.192:8010'
+    // let url = 'ws://91.121.66.175:8010'
+    //let url = 'ws://91.121.6.192:8010'
+    // let url = 'wss://echo.websocket.org/'
+    let url = 'ws:127.0.0.1:31337';
     ws = new WebSocket(url)
     
     ws.addEventListener('open', onWSOpen)
@@ -92,16 +114,26 @@ function onWSOpen(data) {
 function onWSMessage(e) {
     let data = JSON.parse(e.data)
 
-    if (!players[data.id]) {
-        players[data.id] = new google.maps.Marker({
-            position: { lat: data.lat, lng: data.lng },
-            map: map,
-            animation: google.maps.Animation.DROP
-        })
-    } else {
-        players[data.id].setPosition({
-            lat: data.lat,
-            lng: data.lng
-        })
+    if(data.uid !== undefined) {
+        if(players[data.uid] == undefined) {
+            let newPlayer = createPlayer(data.uid, data.nick);
+            newPlayer.marker = new google.maps.Marker({
+                position: heaven,
+                map: map,
+                animation: google.maps.Animation.DROP,
+                //icon: image
+            });
+            newPlayer.marker.setPosition({
+                lat: data.lat,
+                lng: data.lng
+            });
+        } 
+        else
+        if(players[data.uid].id !== currentPlayer.id) {
+            players[data.uid].marker.setPosition({
+                lat: data.lat,
+                lng: data.lng
+            });
+        }
     }
 }
