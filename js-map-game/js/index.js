@@ -97,10 +97,10 @@ function moveMarker(ev) {
 }
 
 function startWebSocket() {
-    // let url = 'ws://91.121.66.175:8010'
-    //let url = 'ws://91.121.6.192:8010'
+    //let url = 'ws://91.121.66.175:8010'
+    // let url = 'ws://91.121.6.192:8010'
     // let url = 'wss://echo.websocket.org/'
-    let url = 'ws:127.0.0.1:31337';
+    let url = 'ws:127.0.0.1:31337'; //websocket-broadcast --noid -p 31337
     ws = new WebSocket(url)
     
     ws.addEventListener('open', onWSOpen)
