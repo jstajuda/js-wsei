@@ -1,7 +1,50 @@
 export default class Note {
 
-  constructor(title = "New note") {
-    this.title = title;
+  constructor(obj) {
+    obj = obj || {}
+    this.id = obj.id || parseInt(Note.Count()) + 1;
+    this.title = obj.title || 'Tytuł notatki';
+    this.content = obj.content || 'Treść notatki';
+    this.isPinned = obj.isPinned || false;
+    this.createdAt = obj.createdAt || new Date();
+    this.updatedAt = obj.updatedAt || undefined;
   }
+
+  Save() {
+    if(this.updatedAt == undefined) {
+      this.updatedAt = this.createdAt;
+      localStorage.setItem('noteIndex', this.id);
+    }
+    this.updatedAt = new Date();
+    localStorage.setItem('note-' + this.id, this.ToJSON());
+  }
+
+  static GetAll() {
+    let notes = [];
+    let count = parseInt(Note.Count());
+
+    if (count > 0) {
+      for(let i = 1; i <= count; i++) {
+        let note = new Note(JSON.parse(localStorage.getItem('note-' + i)));
+        notes.push(note);
+      }
+    }
+
+    return notes;
+  }
+
+  ToJSON() {
+    return JSON.stringify(this);
+  }
+
+  static Count() {
+    let index = localStorage.getItem('noteIndex');
+    if ( index !== null) {
+      return index;
+    }
+    localStorage.setItem('noteIndex', 0);
+    return 0;
+  }
+
 
 }
