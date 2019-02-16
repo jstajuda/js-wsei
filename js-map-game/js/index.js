@@ -6,8 +6,16 @@ let players = []
 function createPlayer(playerId, nick) {
     let currentdate = new Date();
 
+    // if local app player
     if(playerId == -1) {
-        playerId = currentdate.valueOf();
+        // player already has generated id
+        if( localStorage.getItem('currentPlayerId') !== null ) {
+            playerId = localStorage.getItem('currentPlayerId');
+        } else {
+            // plays for the first time
+            playerId = currentdate.valueOf();
+            localStorage.setItem('currentPlayerId', playerId);
+        }
     }
 
     let player = {
@@ -19,22 +27,37 @@ function createPlayer(playerId, nick) {
     players[player.id] = player;
     return player;
 }
-let currentPlayer = createPlayer(-1, "Player 1");
+
+let currentPlayer = createPlayer(-1, "Player " + Math.round(Math.random(0, 10) * 100));
 
 function initMap() {
-    heaven = { lat: 55.752, lng: 37.616 };
+    initLocation = { lat: 50.065, lng: 19.945 };
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 8,
-        center: heaven,
-        keyboardShortcuts: false
+        center: initLocation,
+        keyboardShortcuts: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     });
     
-    var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-    marker = new google.maps.Marker({
-        position: heaven,
+    let markerIcon = {
+        url: 'http://image.flaticon.com/icons/svg/252/252025.svg',
+        scaledSize: new google.maps.Size(40, 40),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(32,65),
+        labelOrigin: new google.maps.Point(20,50)
+    };
+
+    let marker = new google.maps.Marker({
+        position: initLocation,
         map: map,
         animation: google.maps.Animation.DROP,
-        icon: image
+        icon: markerIcon,
+        label: {
+            text: currentPlayer.nickname, 
+            color: "#a00",
+            fontSize: "16px",
+            fontWeight: "bold"
+        }
     });
 
     currentPlayer.marker = marker;
@@ -96,6 +119,31 @@ function moveMarker(ev) {
     ws.send(JSON.stringify(wsData))
 }
 
+function newPlayerNotificationSend() {
+    let lat = currentPlayer.marker.getPosition().lat();
+    let lng = currentPlayer.marker.getPosition().lng();
+    let wsData = {
+        lat: lat,
+        lng: lng,
+        uid: currentPlayer.id,
+        nick: currentPlayer.nickname,
+        request: 'showYourselves'
+    }
+    ws.send(JSON.stringify(wsData))
+}
+
+function broadcastPosition() {
+    let lat = currentPlayer.marker.getPosition().lat();
+    let lng = currentPlayer.marker.getPosition().lng();
+    let wsData = {
+        lat: lat,
+        lng: lng,
+        uid: currentPlayer.id,
+        nick: currentPlayer.nickname
+    }
+    ws.send(JSON.stringify(wsData))
+}
+
 function startWebSocket() {
     //let url = 'ws://91.121.66.175:8010'
     // let url = 'ws://91.121.6.192:8010'
@@ -108,32 +156,58 @@ function startWebSocket() {
 }
 
 function onWSOpen(data) {
+    newPlayerNotificationSend()
     console.log(data)
 }
 
 function onWSMessage(e) {
     let data = JSON.parse(e.data)
 
+    // catch data with player uid
     if(data.uid !== undefined) {
+
+        // player not registered in current app
         if(players[data.uid] == undefined) {
             let newPlayer = createPlayer(data.uid, data.nick);
-            newPlayer.marker = new google.maps.Marker({
-                position: heaven,
+
+            let markerIcon = {
+                url: 'http://image.flaticon.com/icons/svg/252/252025.svg',
+                scaledSize: new google.maps.Size(40, 40),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(32,65),
+                labelOrigin: new google.maps.Point(20,50)
+            };
+        
+            let marker = new google.maps.Marker({
+                position: initLocation,
                 map: map,
                 animation: google.maps.Animation.DROP,
-                //icon: image
+                icon: markerIcon,
+                label: {
+                    text: newPlayer.nickname, 
+                    color: "#a00",
+                    fontSize: "16px",
+                    fontWeight: "bold"
+                }
             });
+            newPlayer.marker = marker;
+
             newPlayer.marker.setPosition({
                 lat: data.lat,
                 lng: data.lng
             });
         } 
         else
+        // discard message from current player
         if(players[data.uid].id !== currentPlayer.id) {
             players[data.uid].marker.setPosition({
                 lat: data.lat,
                 lng: data.lng
             });
+        }
+
+        if(data.request == 'showYourselves') {
+            broadcastPosition();
         }
     }
 }
