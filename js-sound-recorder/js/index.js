@@ -20,19 +20,26 @@ const channelSelect = document.getElementById('audioChannel');
 let selectedChannel = channelSelect.options[channelSelect.options.selectedIndex].value;
 
 channelSelect.addEventListener('change', function(e){
-    let selectedChannel = e.target.options[e.target.options.selectedIndex].value;
+    selectedChannel = e.target.options[e.target.options.selectedIndex].value;
 }); 
 
 
 
 let record = document.getElementById('recordingRecord');
 let stop = document.getElementById('recordingStop');
-let ch1Container = document.getElementById('channel1-container');
+//let ch1Container = document.getElementById('channel1-container');
+
+function clearChannel(channel) {
+    while (channel.firstChild) {
+        channel.removeChild(channel.firstChild);
+    }
+}
 
 navigator.mediaDevices.getUserMedia({audio: true})
     .then(stream => {
         const mediaRecorder = new MediaRecorder(stream);
         const audioChunks = [];
+        let container = {};
 
         mediaRecorder.addEventListener('dataavailable', event => {
             audioChunks.push(event.data);
@@ -44,20 +51,27 @@ navigator.mediaDevices.getUserMedia({audio: true})
             const recordedAudio = new Audio(audioUrl);
             
             recordedAudio.controls = true;
-            ch1Container.appendChild(recordedAudio);
+            container.appendChild(recordedAudio);
         });
 
         record.addEventListener('click', event => {
-            mediaRecorder.start();
-            record.style.background = "#a00";
-            console.log('recording started');
+            if(mediaRecorder.state == 'recording') {
+                mediaRecorder.stop();
+                record.innerHTML = 'Start recording';
+            } else {
+                mediaRecorder.start();
+                container = document.getElementById(selectedChannel + '-container');
+                clearChannel(container);
+                record.innerHTML = 'Stop recording';
+            }
         })
 
-        stop.addEventListener('click', event => {
-            mediaRecorder.stop();
-            record.style.background = "#333";
-            console.log('recording stopped');
-        });
+        // stop.addEventListener('click', event => {
+        //     mediaRecorder.stop();
+        //     console.log(mediaRecorder.state);
+        //     record.style.background = "#333";
+        //     console.log('recording stopped');
+        // });
     });
 
 
