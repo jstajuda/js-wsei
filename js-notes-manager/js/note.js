@@ -6,6 +6,7 @@ export default class Note {
     this.title = obj.title || 'Tytuł notatki';
     this.content = obj.content || 'Treść notatki';
     this.isPinned = obj.isPinned || false;
+    this.isDeleted = obj.isDeleted || false;
     this.createdAt = obj.createdAt || new Date();
     this.updatedAt = obj.updatedAt || undefined;
   }
@@ -19,6 +20,11 @@ export default class Note {
     localStorage.setItem('note-' + this.id, this.ToJSON());
   }
 
+  Delete() {
+    this.isDeleted = true;
+    this.Save();
+  }
+
   static GetAll() {
     let notes = [];
     let count = parseInt(Note.Count());
@@ -26,11 +32,13 @@ export default class Note {
     if (count > 0) {
       for(let i = 1; i <= count; i++) {
         let note = new Note(JSON.parse(localStorage.getItem('note-' + i)));
-        notes.push(note);
+        if( note.isDeleted !== true) {
+          notes.push(note);
+        }
       }
     }
 
-    return notes;
+    return notes.reverse();
   }
 
   ToJSON() {

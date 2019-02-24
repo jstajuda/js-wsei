@@ -4,72 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+    <link rel="stylesheet" href="css/spectre.min.css">
+    <link rel="stylesheet" href="css/spectre-exp.min.css">
+    <link rel="stylesheet" href="css/spectre-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>JS Notes Manager</title>
 </head>
 <body>
 
-<nav>
-  <div class="nav-wrapper">
-    <a href="#" class="brand-logo">JS Notes Manager</a>
-    <ul id="nav-mobile" class="right hide-on-med-and-down">
-      <li><a href="sass.html">Sass</a></li>
-      <li><a href="badges.html">Components</a></li>
-      <li><a href="collapsible.html">JavaScript</a></li>
-    </ul>
-  </div>
-</nav>
+<button id="new-note-button" class="btn btn-primary btn-lg">
+  <i class="icon icon-plus"></i>
+</button>
 
 <section id="board">
-  <div class="note">
-    <div class="note-title">Note title</div>
-    <div class="note-date">01-01-01 11:00</div>
-    <div class="note-content">Note content</div>
-    <div class="note-tools">[Note tools (pin, edit, delete)]</div>
-  </div>
-    <div class="note">
-    <div class="note-title">Note title</div>
-    <div class="note-date">01-01-01 11:00</div>
-    <div class="note-content">Note content</div>
-    <div class="note-tools">Note tools (pin, color)</div>
-  </div>
-  <div class="note">
-    <div class="note-title">Note title</div>
-    <div class="note-date">01-01-01 11:00</div>
-    <div class="note-content">Note content</div>
-    <div class="note-tools">Note tools (pin, color)</div>
-  </div>
-  <div class="note">
-    <div class="note-title">Note title</div>
-    <div class="note-date">01-01-01 11:00</div>
-    <div class="note-content">Note content</div>
-    <div class="note-tools">Note tools (pin, color)</div>
-  </div>
+  <!-- <div class="note">
+    <div class="note-title text-primary">Note title</div>
+    <div class="note-created-at">01-01-01 11:00</div>
+    <div class="note-updated-at">01-01-01 11:00</div>
+    <div class="divider"></div>
+    <div class="note-content">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos perspiciatis dicta possimus reprehenderit provident cum incidunt maiores error, soluta saepe asperiores porro beatae quae, aliquid amet fugiat numquam. Rerum, facilis!</div>
+    <div class="divider"></div>
+    <div class="note-tools text-right">
+      <i class="icon icon-edit text-warning" title="Edit Note"></i>
+      <i class="icon icon-delete text-error" title="Delete Note"></i>
+      <i class="icon icon-bookmark text-success" title="Bookmark"></i>
+    </div>
+  </div> -->
 </section>
 
 <section id="newNoteContainer">
   <div id="newNoteFormWrapper">
     <form id="newNoteForm" action="#">
       <div class="form-group">
-        <label for="inputNoteTitle">Note title</label>
-        <input type="text" class="form-control" id="inputNoteTitle" placeholder="Enter title">
+        <label for="inputNoteTitle" class="form-label">Note title</label>
+        <span class="text-error" id="inputTitleError"></span>
+        <input type="text" class="form-input" id="inputNoteTitle" placeholder="Enter title">
       </div>
       <div class="form-group">
-        <label for="inputNoteContent">Content</label>
-        <textarea id="inputNoteContent" class="form-control"></textarea>
+        <label for="inputNoteContent" class="form-label">Content</label>
+        <span class="text-error" id="inputTitleError"></span>
+        <textarea id="inputNoteContent" class="form-input"></textarea>
       </div>
       <div class="form-group form-check">
-        <input type="checkbox" class="form-check-input" id="notePinnedCheck">
-        <label class="form-check-label" for="notePinnedCheck">Pin to top</label>
+        <label class="form-checkbox" for="notePinnedCheck">
+          <input type="checkbox" id="notePinnedCheck">
+          <i class="form-icon"></i>Pin to top
+        </label>
       </div>
-      <button type="submit" class="btn btn-primary">Add note</button>
+      <button type="submit" class="btn btn-primary" id="addNoteButton">Add note</button>
+      <button class="btn" id="addNoteCancelButton">Cancel</button>
   </form>
   </div>
 </section>
 
-<script type="text/javascript" src="js/materialize.js"></script>
+<section id="editNoteContainer">
+  <div id="editNoteFormWrapper">
+    <form id="editNoteForm" action="#">
+      <div class="form-group">
+        <label for="inputNoteTitle" class="form-label">Note title</label>
+        <span class="text-error" id="editInputTitleError"></span>
+        <input type="text" class="form-input" id="editInputNoteTitle" placeholder="Enter title">
+      </div>
+      <div class="form-group">
+        <label for="editInputNoteContent" class="form-label">Content</label>
+        <span class="text-error" id="editInputTitleError"></span>
+        <textarea id="editInputNoteContent" class="form-input"></textarea>
+      </div>
+      <div class="form-group form-check">
+        <label class="form-checkbox" for="editNotePinnedCheck">
+          <input type="checkbox" id="editNotePinnedCheck">
+          <i class="form-icon"></i>Pin to top
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary" id="editNoteSaveButton">Save changes</button>
+      <button class="btn" id="editNoteCancelButton">Cancel</button>
+  </form>
+  </div>
+</section>
+
 <script src="js/index.js" type="module"></script>
 
 </body>

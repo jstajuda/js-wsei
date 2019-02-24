@@ -4,6 +4,65 @@
 /* Basic styling */
 
 body {
-    background: #fff;
+    background: linear-gradient(to bottom, #f2f5f6 0%,#e3eaed 37%,#c8d7dc 100%);
+    background-attachment: fixed;
     color: #333;
+    height: 100vh;
+    padding: 20px;
+    position: relative;
 }
+
+#newNoteContainer, #editNoteContainer {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 500px;
+  min-height: 300px;
+  box-shadow: 0px 0px 50px 5px rgba(0,0,0,0.25);
+}
+
+
+#board {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.note {
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ccc;
+  min-width: 20%;
+  max-width: 20%;
+  min-height: 200px;
+  margin: 5px;
+}
+
+.note-title {
+  font-weight: bold;
+}
+
+.note-created-at, .note-updated-at {
+  color: #777;
+  font-size: .75em;
+}
+
+.note-created-at {
+  display: none;
+}
+
+.note .icon {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+#new-note-button {
+  position: absolute;
+}
+
