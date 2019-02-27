@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/spectre.min.css">
+    <link rel="stylesheet" href="css/spectre-icons.min.css">
+    <link rel="stylesheet" href="css/spectre-exp.min.css"/>
     <link rel="stylesheet" href="css/style.css">
     <title>JS Ball Game</title>
 </head>
@@ -11,18 +14,17 @@
     <div id="mainWrapper">
         <section id="panel">
             <div id="buttonPanel">
-                <button id="buttonStart">start</button>
-                <button id="buttonPause" disabled>pause</button>
-                <button id="buttonRestart" disabled>restart</button>
-                <button id="buttonExit" disabled>exit</button>
+                <button id="buttonStart" class="btn">start</button>
+                <button id="buttonPause" class="btn" disabled>pause</button>
+                <button id="buttonRestart" class="btn" disabled>restart</button>
+                <button id="buttonExit" class="btn" disabled>exit</button>
             </div>
-            <div id="timer">00:00:00</div>
+            <div id="timer">00:00</div>
         </section>
 
         <section id="gameWrapper">
-            <span id="msg"></span>
             <svg id="gameBoard">
-                
+                <circle cx="50" cy="50" r="10" fill="red" id="ball"/>
             </svg>
         </section>
     </div>
