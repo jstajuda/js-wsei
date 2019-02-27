@@ -4,28 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/spectre.min.css">
+    <link rel="stylesheet" href="css/spectre-exp.min.css">
+    <link rel="stylesheet" href="css/spectre-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
     <title>JS Image Editor</title>
 </head>
 <body>
     <section id="workspace">
         <div id="panel">
-            <div>
-                <label for="imageFile">Choose an image file:</label>
-                <input type="file"
+
+            <!-- open file dropdown -->
+            <div class="dropdown">
+                <a href="#" class="btn btn-link dropdown-toggle" tabindex="0">
+                OPEN IMAGE <i class="icon icon-caret"></i>
+                </a>
+                <ul class="menu">
+                    <li class="menu-item">
+                        <input type="file"
                         id="imageFile" name="imageFile"
-                        accept="image/png, image/jpeg">
+                        accept="image/png, image/jpeg" class="inputfile">
+                        <a href="#">
+                            <label for="imageFile" class="inputFileLabel">Choose a file from disk</label>
+                        </a>
+                    </li>
+                    <!-- <li class="divider text-center" data-content="OR LOAD FROM WEB"></li>
+                    <li class="menu-item">
+                        <form id="loadImageFromUrl">
+                            <div class="input-group">
+                                <span class="input-group-addon">URL</span>
+                                <input type="url" name="imageUrl" id="imageUrl"
+                                        placeholder="https://example.com"
+                                        pattern="http(s)?://.*" size="30"
+                                        required class="form-input">
+                                <input type="submit" name="imageUrlButton" id="imageUrlButton" value="Load" class="btn">
+                            </div>
+                        </form>
+                    </li> -->
+                </ul>
+            </div>        
+
+            <!-- effects menu -->
+            <div class="effectsButtonsWrapper">
+                <div id="brighten">
+                    <button class="btn" id="brightenButton">Brighten</button>
+                </div>
+                <div id="darken">
+                    <button class="btn" id="darkenButton">Darken</button>
+                </div>
+                <div id="moreContrast">
+                    <button class="btn" id="moreContrastButton">More Contrast</button>
+                </div>
+                <div id="lessContrast">
+                    <button class="btn" id="lessContrastButton">Less Contrast</button>
+                </div>
+                <div id="grayscale">
+                    <button class="btn" id="grayscaleButton">Grayscale</button>
+                </div>
+                <div id="threshold">
+                    <button class="btn" id="thresholdButton">Threshold</button>
+                </div>
             </div>
-            <div>
-                <form id="loadImageFromUrl">
-                    <label for="imageUrl">Enter an https:// URL:</label>
-                    <input type="url" name="imageUrl" id="imageUrl"
-                            placeholder="https://example.com"
-                            pattern="http(s)?://.*" size="30"
-                            required>
-                    <input type="submit" name="imageUrlButton" id="imageUrlButton" value="Load">
-                </form>
-            </div>
+
+
         </div>
         <div id="canvasWrapper">
             <canvas id="imgCanvas"></canvas>

@@ -26,11 +26,11 @@ img {
 
 /* Basic styling */
 body {
-    background: #111;
-    color: #eee;
+    background: #eee;
 }
 
 #workspace {
+    background: #eee;
     width: 100vw;
     height: 100vh;
     padding: 1em;
@@ -41,12 +41,42 @@ body {
 }
 
 #panel {
-    width: 100%;
+    width: 95%;
+    height: 50px;
+    display: flex;
+    align-items: center;
 }
 
 #canvasWrapper {
-    border: 3px solid #333;
-    width: 95vw;
-    height: 95vh;
+    border: 1px solid #aaa;
+    width: 95%;
+    height: 95%;
     overflow: auto;
+    background: #fff;
+}
+
+.inputfile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+.inputFileLabel {
+	cursor: pointer; /* "hand" cursor */
+}
+
+.dropdown .menu {
+    min-width: 350px;
+}
+
+.effectsButtonsWrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.effectsButtonsWrapper > div {
+    margin-right: 3px;
 }
