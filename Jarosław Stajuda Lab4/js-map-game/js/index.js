@@ -15,7 +15,7 @@ function initStartScreen() {
     }
 
     const wsServers = [
-        { id: 0, name: 'Local', ip: 'ws://127.0.0.1:31337'},
+        { id: 0, name: 'Local', ip: 'ws://192.168.2.12:31337'},
         { id: 1, name: 'Wsei-1', ip: 'ws://91.121.6.192:8010'},
         { id: 2, name: 'Wsei-2', ip: 'ws://91.121.66.175:8010'}
     ];
@@ -131,6 +131,11 @@ function onWSMessage(e) {
         if(data.request == 'showYourselves') {
             broadcastPosition();
         }
+
+        if(data.left == true) {
+            players[data.uid].marker.setMap(null);
+            console.log(`Player ${players[data.uid].nickname} has left the game!`);
+        }
     }
 }
 //#endregion
@@ -227,9 +232,7 @@ function moveMarker(ev) {
     currentPlayer.marker.setPosition(position)
     ws.send(JSON.stringify(wsData))
 }
-//#endregion
-
-
+//#endregion 
 
 //#region player
 function createCurrentPlayer(nick) {
@@ -238,7 +241,6 @@ function createCurrentPlayer(nick) {
     // player already has generated id
     if( localStorage.getItem('currentPlayerId') !== null ) {
         playerId = localStorage.getItem('currentPlayerId');
-        nick = localStorage.getItem('currentPlayerNickName');
     } else {
         // plays for the first time
         playerId = currentdate.valueOf();
@@ -278,8 +280,6 @@ function createPlayer(playerId, nick) {
     return player;
 }
 
-
-
 function newPlayerNotificationSend() {
     let lat = currentPlayer.marker.getPosition().lat();
     let lng = currentPlayer.marker.getPosition().lng();
@@ -292,6 +292,21 @@ function newPlayerNotificationSend() {
     }
     ws.send(JSON.stringify(wsData))
 }
+
+function playerQuitNotificationSend() {
+    let lat = currentPlayer.marker.getPosition().lat();
+    let lng = currentPlayer.marker.getPosition().lng();
+    let wsData = {
+        lat: lat,
+        lng: lng,
+        uid: currentPlayer.id,
+        nick: currentPlayer.nickname,
+        left: true
+    }
+    ws.send(JSON.stringify(wsData));
+}
+
+window.addEventListener('beforeunload', playerQuitNotificationSend);
 
 function broadcastPosition() {
     let lat = currentPlayer.marker.getPosition().lat();
