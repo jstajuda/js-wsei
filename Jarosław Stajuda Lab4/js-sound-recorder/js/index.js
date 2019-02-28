@@ -1,4 +1,3 @@
-
 window.addEventListener('keydown', function(e){
     const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
     const key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
@@ -6,6 +5,8 @@ window.addEventListener('keydown', function(e){
     audio.currentTime = 0;
     audio.play();
     key.classList.add('playing');
+    audioEl = audio;
+    console.log(audioEl);
 });
 
 function removeTransition(e) {
@@ -23,11 +24,8 @@ channelSelect.addEventListener('change', function(e){
     selectedChannel = e.target.options[e.target.options.selectedIndex].value;
 }); 
 
-
-
 let record = document.getElementById('recordingRecord');
 let stop = document.getElementById('recordingStop');
-//let ch1Container = document.getElementById('channel1-container');
 
 function clearChannel(channel) {
     while (channel.firstChild) {
@@ -38,11 +36,15 @@ function clearChannel(channel) {
 navigator.mediaDevices.getUserMedia({audio: true})
     .then(stream => {
         const mediaRecorder = new MediaRecorder(stream);
-        const audioChunks = [];
+        let audioChunks = [];
         let container = {};
 
         mediaRecorder.addEventListener('dataavailable', event => {
             audioChunks.push(event.data);
+        });
+
+        mediaRecorder.addEventListener('start', event => {
+            audioChunks = [];
         });
 
         mediaRecorder.addEventListener('stop', event => {
@@ -51,7 +53,12 @@ navigator.mediaDevices.getUserMedia({audio: true})
             const recordedAudio = new Audio(audioUrl);
             
             recordedAudio.controls = true;
-            container.appendChild(recordedAudio);
+            recordedAudio.onloadeddata = function() {
+                if(recordedAudio.readyState == 4) {
+                    container.appendChild(recordedAudio);
+
+                }
+            }
         });
 
         record.addEventListener('click', event => {
@@ -59,21 +66,10 @@ navigator.mediaDevices.getUserMedia({audio: true})
                 mediaRecorder.stop();
                 record.innerHTML = 'Start recording';
             } else {
-                mediaRecorder.start();
                 container = document.getElementById(selectedChannel + '-container');
                 clearChannel(container);
                 record.innerHTML = 'Stop recording';
+                mediaRecorder.start();
             }
         })
-
-        // stop.addEventListener('click', event => {
-        //     mediaRecorder.stop();
-        //     console.log(mediaRecorder.state);
-        //     record.style.background = "#333";
-        //     console.log('recording stopped');
-        // });
     });
-
-
-
-
