@@ -5,24 +5,10 @@ Number.prototype.pad = function(size) {
     return s;
 }
 
-const ball = document.getElementById("ball");
-console.log(ball);
+window.onload = function() {
 
-function createBall() {
-    ball.setAttribute('cx', 20);
-    ball.setAttribute('cy', 20);
-    ball.style.display = "block";
-}
 
-function ballMoveX(pixels) {
-    let cx = ball.cx;
-    if(ball.cx - pixels < 0) {
-        pixels = ball.cx;
-    }
-    //rozmiary planszy
-    //odleglosci
-}
-
+let panel = document.getElementById("panel");
 let buttonStart = document.getElementById("buttonStart");
 let buttonPause = document.getElementById("buttonPause");
 let buttonRestart = document.getElementById("buttonRestart");
@@ -37,6 +23,25 @@ let paused = false;
 let beta = 0;
 let gamma = 0;
 let anim = {};
+
+let gameBoard = document.getElementById('gameBoard');
+
+const ball = document.getElementById("ball");
+const hole = document.getElementById("hole");
+
+function createBall() {
+    ball.setAttribute('cx', 20);
+    ball.setAttribute('cy', 20);
+    ball.style.display = "block";
+}
+
+function createHole() {
+    hole.setAttribute('cx', gameBoard.width.baseVal.value - 80);
+    hole.setAttribute('cy', gameBoard.height.baseVal.value - 80);
+    hole.style.display = "block";
+}
+
+
 
 buttonStart.addEventListener("click", startGame);
 buttonExit.addEventListener("click", endGame);
@@ -102,8 +107,11 @@ function startGame() {
         resetTimer();
 
         //show the ball
+        gameBoard.setAttribute('width', window.innerWidth);
+        gameBoard.setAttribute('height', screen.availHeight - panel.offsetHeight);
         resetBoard();
         createBall();
+        createHole();
 
         //start moving
         startAnimation();
@@ -152,9 +160,9 @@ function resetTimer() {
 }
 
 
-const zSpan = document.getElementById('z');
-const xSpan = document.getElementById('x');
-const ySpan = document.getElementById('y');
+// const zSpan = document.getElementById('z');
+// const xSpan = document.getElementById('x');
+// const ySpan = document.getElementById('y');
 
 
 
@@ -166,11 +174,11 @@ function handleOrientation(event) {
     // xSpan.innerHTML = beta.toFixed(0);
     // ySpan.innerHTML = gamma.toFixed(0);
 
-    yAdj = (beta / 18).toFixed(0);
-    xAdj = (gamma / 9).toFixed(0);
+    // yAdj = (beta / 18).toFixed(0);
+    // xAdj = (gamma / 9).toFixed(0);
 
-    xSpan.innerHTML = yAdj;
-    ySpan.innerHTML = xAdj;
+    // xSpan.innerHTML = yAdj;
+    // ySpan.innerHTML = xAdj;
 
     //movement
     // beta > 0 && gamma > 0 => down - right
@@ -178,27 +186,66 @@ function handleOrientation(event) {
     // beta < 0 && gamma < 0 => up - left
     // beta > 0 && gamma < 0 => down - left
 
+
 }
+
+
 
 function moveBall() {
     let x = ball.cx.baseVal.value;
     let y = ball.cy.baseVal.value;
+    let r = ball.r.baseVal.value;
 
-    if(beta > 10) {
-        ball.setAttribute('cy', y + 1);
-    } 
-    else if(beta < -10) {
-        ball.setAttribute('cy', y - 1);
+    let minX = 0;
+    let minY = 0;
+    let maxX = gameBoard.width.baseVal.value;
+    let maxY = gameBoard.height.baseVal.value;
+
+    if(ballIn()) {
+        endGame();
+    }
+    else {
+        if(beta > 10) {
+            if(y + r < maxY) {
+                ball.setAttribute('cy', y + 2);
+            }
+        } 
+        else if(beta < -10) {
+            if(y - r > minY) {
+                ball.setAttribute('cy', y - 2);
+            }
+        } 
+    
+        if(gamma > 10) {
+            if(x + r < maxX) {
+                ball.setAttribute('cx', x + 2);
+            }
+        } 
+        else if (gamma < -10) {
+            if(x - r > minX) {
+                ball.setAttribute('cx', x - 2);
+            }
+        }
+        anim = window.requestAnimationFrame(moveBall);
     }
 
-    if(gamma > 10) {
-        ball.setAttribute('cx', x + 1);
-    } 
-    else if (gamma < -10) {
-        ball.setAttribute('cx', x - 1);
-    }
+}
 
-    anim = window.requestAnimationFrame(moveBall);
+function ballIn() {
+    let bx = ball.cx.baseVal.value;
+    let by = ball.cy.baseVal.value;
+    let br = ball.r.baseVal.value;
+
+    let hx = hole.cx.baseVal.value;
+    let hy = hole.cy.baseVal.value;
+    let hr = hole.r.baseVal.value;
+
+    if(bx-br >= hx-hr && bx+br <= hx+hr && by-br >= hy-hr && by+br <= hy+hr)
+    {
+        return true;
+    }
+    
+    return false;
 }
 
 function startAnimation() {
@@ -212,4 +259,9 @@ function stopAnimation() {
 function resetBoard() {
     ball.setAttribute('cx', 20);
     ball.setAttribute('cy', 20);
+}
+
+
+
+
 }
