@@ -23,13 +23,6 @@
     cursor: not-allowed;
 }
 
-#buttons {
-
-}
-
-#timer {
-}
-
 #gameWrapper {
     width: 100%;
     flex-grow: 1;
@@ -37,10 +30,8 @@
 }
 
 #gameBoard {
-    /* width: 100%;
-    height: auto;
-    flex-grow: 1; */
     background: #eee;
+    display: none;
 }
 
 #ball, #hole {

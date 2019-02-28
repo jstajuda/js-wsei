@@ -7,14 +7,15 @@ Number.prototype.pad = function(size) {
 
 window.onload = function() {
 
+//this s..tuff needs some serious refactoring :/
 
+// #region variables declarations
 let panel = document.getElementById("panel");
 let buttonStart = document.getElementById("buttonStart");
 let buttonPause = document.getElementById("buttonPause");
 let buttonRestart = document.getElementById("buttonRestart");
 let buttonExit = document.getElementById("buttonExit");
 
-let msg = document.getElementById("msg");
 let time = {};
 let timer = {};
 let timerEl = document.getElementById('timer');
@@ -24,25 +25,12 @@ let beta = 0;
 let gamma = 0;
 let anim = {};
 
-let gameBoard = document.getElementById('gameBoard');
-
+const gameBoard = document.getElementById('gameBoard');
 const ball = document.getElementById("ball");
 const hole = document.getElementById("hole");
+// #endregion
 
-function createBall() {
-    ball.setAttribute('cx', 20);
-    ball.setAttribute('cy', 20);
-    ball.style.display = "block";
-}
-
-function createHole() {
-    hole.setAttribute('cx', gameBoard.width.baseVal.value - 80);
-    hole.setAttribute('cy', gameBoard.height.baseVal.value - 80);
-    hole.style.display = "block";
-}
-
-
-
+// #region event listeners set up
 buttonStart.addEventListener("click", startGame);
 buttonExit.addEventListener("click", endGame);
 buttonPause.addEventListener("click", pauseGame);
@@ -53,6 +41,49 @@ document.addEventListener("fullscreenchange", function() {
         buttonStart.removeAttribute("disabled");
     }
 });
+
+window.addEventListener("deviceorientation", handleOrientation, true);
+// #endregion
+
+// #region game
+function startGame() {
+    if(!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then({}).catch(err => {
+            alert('Cant get to full screen mode!');
+        });
+    } else {
+        document.exitFullscreen();
+    }
+
+    screen.orientation.lock("portrait-primary").then(function() {
+        //game started
+        
+        //set available buttons
+        buttonStart.setAttribute("disabled", "disabled");
+        buttonPause.removeAttribute("disabled");
+        buttonRestart.removeAttribute("disabled");
+        buttonExit.removeAttribute("disabled");
+
+        //start timer
+        resetTimer();
+
+        //set up game board
+        gameBoard.setAttribute('width', window.innerWidth);
+        gameBoard.setAttribute('height', screen.availHeight - panel.offsetHeight);
+        resetBoard();
+        createBall();
+        createHole();
+
+        //start moving
+        startAnimation();
+
+    }, function(error) {
+        //error starting game
+        alert(error);
+        document.exitFullscreen();
+        cleanUI();
+    });
+}
 
 function pauseGame() {
     if(paused) {
@@ -81,58 +112,17 @@ function restartGame() {
     startAnimation();
 }
 
-
-function startGame() {
-    if(!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().then({}).catch(err => {
-            alert('Cant get to full screen mode!');
-        });
-    } else {
-        document.exitFullscreen();
-    }
-
-    screen.orientation.lock("portrait-primary").then(function() {
-
-        //game started
-        
-        //set available buttons
-        buttonStart.setAttribute("disabled", "disabled");
-        buttonPause.removeAttribute("disabled");
-        buttonRestart.removeAttribute("disabled");
-        buttonExit.removeAttribute("disabled");
-
-
-
-        //start timer
-        resetTimer();
-
-        //show the ball
-        gameBoard.setAttribute('width', window.innerWidth);
-        gameBoard.setAttribute('height', screen.availHeight - panel.offsetHeight);
-        resetBoard();
-        createBall();
-        createHole();
-
-        //start moving
-        startAnimation();
-
-    }, function(error) {
-        //error starting game
-        alert(error);
-        document.exitFullscreen();
-        cleanGame();
-    });
-}
-
 function endGame() {
     stopAnimation();
     alert(`Game ended with time: ${printTime()}`);
     clearTime();
     document.exitFullscreen();
-    cleanGame();
+    cleanUI();
 }
+// #endregion
 
-function cleanGame() {
+// #region ui
+function cleanUI() {
     paused = false;
     buttonStart.removeAttribute("disabled");
     buttonPause.setAttribute("disabled", "disabled");
@@ -158,38 +148,38 @@ function resetTimer() {
         timerEl.innerHTML = `${printTime()}`;
     }, 1000);
 }
+// #endregion
 
+// #region game board
+function createBall() {
+    ball.setAttribute('cx', 20);
+    ball.setAttribute('cy', 20);
+    ball.style.display = "block";
+}
 
-// const zSpan = document.getElementById('z');
-// const xSpan = document.getElementById('x');
-// const ySpan = document.getElementById('y');
+function createHole() {
+    hole.setAttribute('cx', gameBoard.width.baseVal.value - 100);
+    hole.setAttribute('cy', gameBoard.height.baseVal.value - 100);
+    hole.style.display = "block";
+}
 
+function resetBoard() {
+    gameBoard.style.display = 'block';
+    ball.setAttribute('cx', 20);
+    ball.setAttribute('cy', 20);
+}
+// #endregion
 
-
-window.addEventListener("deviceorientation", handleOrientation, true);
+// #region animation
 function handleOrientation(event) {
-    beta     = event.beta;
-    gamma    = event.gamma;
-  
-    // xSpan.innerHTML = beta.toFixed(0);
-    // ySpan.innerHTML = gamma.toFixed(0);
-
-    // yAdj = (beta / 18).toFixed(0);
-    // xAdj = (gamma / 9).toFixed(0);
-
-    // xSpan.innerHTML = yAdj;
-    // ySpan.innerHTML = xAdj;
-
-    //movement
+    // movement
     // beta > 0 && gamma > 0 => down - right
     // beta < 0 && gamma > 0 => up - right
     // beta < 0 && gamma < 0 => up - left
     // beta > 0 && gamma < 0 => down - left
-
-
+    beta = event.beta;
+    gamma = event.gamma;
 }
-
-
 
 function moveBall() {
     let x = ball.cx.baseVal.value;
@@ -210,7 +200,7 @@ function moveBall() {
                 ball.setAttribute('cy', y + 2);
             }
         } 
-        else if(beta < -10) {
+        else if(beta < 0) {
             if(y - r > minY) {
                 ball.setAttribute('cy', y - 2);
             }
@@ -228,7 +218,6 @@ function moveBall() {
         }
         anim = window.requestAnimationFrame(moveBall);
     }
-
 }
 
 function ballIn() {
@@ -255,13 +244,6 @@ function startAnimation() {
 function stopAnimation() {
     cancelAnimationFrame(anim);
 }
-
-function resetBoard() {
-    ball.setAttribute('cx', 20);
-    ball.setAttribute('cy', 20);
-}
-
-
-
+// #endregion
 
 }
