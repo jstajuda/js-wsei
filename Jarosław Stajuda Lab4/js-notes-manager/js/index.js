@@ -6,36 +6,66 @@ let noteDeleteButtons = {};
 let noteEditButtons = {};
 let noteBookmarkButtons = {};
 
-const newNoteButton = document.querySelector('#new-note-button');
-const newNoteDialog = document.querySelector('#newNoteContainer');
-const addNoteCancelButton = document.querySelector('#addNoteCancelButton');
+const newNoteButton = document.querySelector('#newNoteButton');
+const noteDialog = document.querySelector('#noteDialog');
+const noteDialogCancelButton = document.querySelector('#noteDialogCancelButton');
+const noteDialogOkButton = document.querySelector('#noteDialogOkButton');
 const addNoteButton = document.querySelector('#addNoteButton');
+const form = document.querySelector('#noteForm');
+
+newNoteButton.addEventListener('click', noteDialogOpen);
+noteDialogCancelButton.addEventListener('click', noteDialogClose);
 
 
-
-newNoteButton.addEventListener('click', newNoteDialogOpen);
-
-addNoteCancelButton.addEventListener('click', newNoteDialogClose);
-
-function newNoteDialogOpen() {
-  newNoteDialog.style.display = 'block';
+// #region note dialog window
+function noteDialogOpen(note) {
+  noteDialog.style.display = 'block';
+  noteDialogPopulate(note);
   newNoteButton.style.display = 'none';
 }
 
-function newNoteDialogClose() {
-  newNoteDialog.style.display = 'none';
+function noteDialogClose() {
+  clearDialog();
+  noteDialog.style.display = 'none';
   newNoteButton.style.display = 'block';
 }
 
+function clearDialog() {
+  let titleError = document.querySelector('#inputTitleError');
+  let contentError = document.querySelector('#inputNoteContentError');
+  let content = document.querySelector('#inputNoteContent');
+  let noteId = document.querySelector('#inputNoteId');
+  titleError.innerHTML = "";
+  contentError.innerHTML = "";
+  form.reset();
+  noteId.value = 0;
+  content.innerHTML = "";
+}
 
+function noteDialogPopulate(note) {
+  let title = document.querySelector('#inputNoteTitle');
+  let noteId = document.querySelector('#inputNoteId');
+  let content = document.querySelector('#inputNoteContent');
+  let pinned = document.querySelector('#notePinnedCheck');
 
-addNoteButton.addEventListener('click', function(e) {
+  if(note !== undefined && note !== null) {
+    noteId.value = note.id;
+    title.value = note.title;
+    content.innerHTML = note.content;
+    pinned.checked = note.isPinned;
+  }
+}
+
+// #endregion
+
+// #region note validate and save
+noteDialogOkButton.addEventListener('click', function(e) {
+  let noteId = document.querySelector('#inputNoteId').value;
   let title = document.querySelector('#inputNoteTitle').value;
   let titleError = document.querySelector('#inputTitleError');
   let content = document.querySelector('#inputNoteContent').value;
   let contentError = document.querySelector('#inputNoteContentError');
   let pinned = document.querySelector('#notePinnedCheck').checked;
-  let form = document.querySelector('#newNoteForm');
 
   let valid = true;
 
@@ -50,23 +80,27 @@ addNoteButton.addEventListener('click', function(e) {
   }
 
   if(valid) {
-    let note = new Note({
-      title: title,
-      content: content,
-      isPinned: pinned,
-    });
+    let note = {};
+
+    if(noteId == 0) {
+      note = new Note();
+    } else {
+      note = notes.find(note => note.id == noteId);
+    }
+
+    note.title = title;
+    note.content = content;
+    note.isPinned = pinned;
 
     note.Save();
     refreshBoard();
-    form.reset();
-    newNoteDialogClose();
+    noteDialogClose();
   }
 
 });
+// #endregion
 
-
-
-
+// #region show notes
 function getNoteTemplate() {
   let noteTemplate = document.createElement('div');
   noteTemplate.classList.add('note');
@@ -131,10 +165,6 @@ function refreshBoard() {
   registerNoteButtonsEvents()
 }
 
-
-refreshBoard();
-
-
 function registerNoteButtonsEvents() {
   noteDeleteButtons = document.querySelectorAll('.icon-delete');
   noteDeleteButtons.forEach( function(button) {
@@ -152,6 +182,9 @@ function registerNoteButtonsEvents() {
   });
 }
 
+// #endregion
+
+// #region edit notes
 function bookmarkNote() {
   alert('Not implemented yet :(');
 }
@@ -159,63 +192,19 @@ function bookmarkNote() {
 function editNote(e) {
   let id = e.target.parentNode.parentNode.id.split('-')[1];
   let note = notes.find(note => note.id == id);
-  editNoteDialogShow(note);
-}
-
-function editNoteDialogShow(note) {
-  const editNoteDialog = document.querySelector('#editNoteContainer');
-  const editNoteCancelButton = document.querySelector('#editNoteCancelButton');
-  const editNoteSaveButton = document.querySelector('#editNoteSaveButton');
-  
-  
-  let title = document.querySelector('#editInputNoteTitle');
-  let titleError = document.querySelector('#editInputTitleError');
-  let content = document.querySelector('#editInputNoteContent');
-  let contentError = document.querySelector('#editInputNoteContentError');
-  let pinned = document.querySelector('#editNotePinnedCheck').checked;
-  let form = document.querySelector('#editNoteForm');
-  
-  title.value = note.title;
-  content.innerHTML = note.content;
-  pinned = note.isPinned;
-  
-  editNoteDialog.style.display = 'block';
-
-  editNoteCancelButton.addEventListener('click', function() {
-    editNoteDialog.style.display = 'none';
-  });
-
-  editNoteSaveButton.addEventListener('click', function() {
-    let valid = true;
-  
-    if (title == undefined || title.length == 0 || title.length > 200 ) {
-      valid = false;
-      titleError.innerHTML = 'Title is required (max 200 characters)';
-    }
-  
-    if (content.length > 1000) {
-      valid = false;
-      contentError.innerHTML = 'Content too long (max 1000 characters)';
-    }
-  
-    if(valid) {
-      note.title = title.value;
-      note.content = content.value;
-      note.isPinned = pinned;
-      note.Save();
-      refreshBoard();
-      form.reset();
-      editNoteDialog.style.display = 'none';
-    }
-  });
+  noteDialogOpen(note);
 }
 
 function deleteNote(e) {
   if( confirm('Are you sure?') ) {
     let id = e.target.parentNode.parentNode.id.split('-')[1];
     let note = notes.find(note => note.id == id);
-
     note.Delete();
+    console.log(`Note ${this.id} deleted.`);
     refreshBoard();
   }
 }
+// #endregion
+
+// init board
+refreshBoard();

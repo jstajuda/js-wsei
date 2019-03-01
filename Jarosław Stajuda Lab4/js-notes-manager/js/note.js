@@ -18,6 +18,7 @@ export default class Note {
     }
     this.updatedAt = new Date();
     localStorage.setItem('note-' + this.id, this.ToJSON());
+    console.log(`Note ${this.id} saved.`);
   }
 
   Delete() {

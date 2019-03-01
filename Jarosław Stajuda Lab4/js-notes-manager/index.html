@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<button id="new-note-button" class="btn btn-primary btn-lg">
+<button id="newNoteButton" class="btn btn-primary btn-lg">
   <i class="icon icon-plus"></i>
 </button>
 
@@ -32,7 +32,34 @@
   </div> -->
 </section>
 
-<section id="newNoteContainer">
+<section id="noteDialog">
+  <div id="noteFormWrapper">
+    <form id="noteForm" action="#">
+      <div class="form-group">
+        <label for="inputNoteTitle" class="form-label">Note title</label>
+        <span class="text-error" id="inputTitleError"></span>
+        <input type="text" class="form-input" id="inputNoteTitle" placeholder="Enter title">
+        <input type="hidden" id="inputNoteId" value="0">
+      </div>
+      <div class="form-group">
+        <label for="inputNoteContent" class="form-label">Content</label>
+        <span class="text-error" id="inputNoteContentError"></span>
+        <textarea id="inputNoteContent" class="form-input"></textarea>
+      </div>
+      <div class="form-group form-check">
+        <label class="form-checkbox" for="notePinnedCheck">
+          <input type="checkbox" id="notePinnedCheck">
+          <i class="form-icon"></i>Pin to top
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary" id="noteDialogOkButton">Save</button>
+      <button class="btn" id="noteDialogCancelButton">Cancel</button>
+  </form>
+  </div>
+</section>
+
+
+<!-- <section id="newNoteContainer">
   <div id="newNoteFormWrapper">
     <form id="newNoteForm" action="#">
       <div class="form-group">
@@ -80,7 +107,7 @@
       <button class="btn" id="editNoteCancelButton">Cancel</button>
   </form>
   </div>
-</section>
+</section> -->
 
 <script src="js/index.js" type="module"></script>
 

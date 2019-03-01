@@ -12,7 +12,11 @@ body {
     position: relative;
 }
 
-#newNoteContainer, #editNoteContainer {
+#newNoteButton {
+  position: absolute;
+}
+
+#noteDialog {
   display: none;
   position: absolute;
   top: 50%;
@@ -62,7 +66,5 @@ body {
   cursor: pointer;
 }
 
-#new-note-button {
-  position: absolute;
-}
+
 
