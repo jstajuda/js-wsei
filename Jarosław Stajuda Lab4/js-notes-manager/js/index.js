@@ -13,9 +13,8 @@ const noteDialogOkButton = document.querySelector('#noteDialogOkButton');
 const addNoteButton = document.querySelector('#addNoteButton');
 const form = document.querySelector('#noteForm');
 
-newNoteButton.addEventListener('click', noteDialogOpen);
+newNoteButton.addEventListener('click', () => { noteDialogOpen() });
 noteDialogCancelButton.addEventListener('click', noteDialogClose);
-
 
 // #region note dialog window
 function noteDialogOpen(note) {
