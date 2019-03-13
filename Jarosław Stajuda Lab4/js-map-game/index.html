@@ -24,7 +24,7 @@
                 <label class="form-label" for="selectWsServer">Select server</label>
                 <select class="form-select" id="selectWsServer" name="wsServer">
                 </select>
-                <span id="selectWsError"></span>
+                <span id="connectionMsg"></span>
             </fieldset>
             <div class="divider m-bot"></div>
             <fieldset class="form-group">
@@ -36,12 +36,10 @@
     <section id="mapWrapper">
         <div id="map"></div>
     </section>
-    <script src="js/index.js"></script>
+    
+    <script src="js/app.js" type="module"></script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARkS-dsh-7IirtcQg3oSZEHudV6Uw9Iic">
     </script>
-    <!-- <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARkS-dsh-7IirtcQg3oSZEHudV6Uw9Iic&callback=initMap">
-    </script> -->
 </body>
 </html>
